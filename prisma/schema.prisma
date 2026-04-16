@@ -1,0 +1,66 @@
+datasource db {
+  provider = "postgresql"
+  // The 'url' line is deleted from here
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String
+  role      Role     @default(USER)
+
+  orders    Order[]
+
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id        String      @id @default(cuid())
+  title     String
+  price     Float
+  rating    Int         @default(5)
+  category  String
+  images    String[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  // FIXED: Added this line to satisfy the relation requirement
+  orderItems OrderItem[] 
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  userId     String
+  total      Float
+  paymentRef String?
+  pending    Boolean     @default(false)
+
+  createdAt  DateTime    @default(now())
+
+  user       User        @relation(fields: [userId], references: [id])
+  items      OrderItem[]
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+
+  name      String
+  price     Float
+  quantity  Int
+
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
