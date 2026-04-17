@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 
 export async function GET() {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     if (!userId) {
       return NextResponse.json(
@@ -13,7 +13,6 @@ export async function GET() {
       );
     }
 
-    // Fetch all completed orders from DB
     const orders = await prisma.order.findMany({
       where: { userId },
       include: { items: true },
