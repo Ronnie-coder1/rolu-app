@@ -3,10 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 
 export async function POST(req: NextRequest) {
-
   try {
-
-    const { userId } = auth();
+    const { userId } = await auth();
 
     if (!userId) {
       return NextResponse.json(
@@ -16,7 +14,6 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-
     const { reference, items, total } = body;
 
     if (!reference) {
@@ -25,8 +22,6 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-
-    /* VERIFY PAYMENT WITH PAYSTACK */
 
     const paystackRes = await fetch(
       `https://api.paystack.co/transaction/verify/${reference}`,
@@ -46,13 +41,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    /* SAVE ORDER */
-
     const order = await prisma.order.create({
       data: {
         userId,
         total,
-
         items: {
           create: items.map((item: any) => ({
             name: item.name,
@@ -69,13 +61,10 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-
     console.error("Paystack verification error:", error);
-
     return NextResponse.json(
       { success: false, message: "Server error" },
       { status: 500 }
     );
-
   }
 }
