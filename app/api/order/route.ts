@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     if (!userId) {
       return NextResponse.json(
@@ -23,13 +23,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check if this order already exists by reference
     const existingOrder = await prisma.order.findUnique({
       where: { paymentRef: reference },
     });
 
     if (existingOrder) {
-      // Update pending order to paid
       const updatedOrder = await prisma.order.update({
         where: { paymentRef: reference },
         data: { pending: false },
@@ -42,7 +40,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Create new order (pending or paid)
     const newOrder = await prisma.order.create({
       data: {
         userId,
