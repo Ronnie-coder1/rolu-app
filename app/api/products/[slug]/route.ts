@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 
-
-
 // Product type
 type Product = {
   id: string;
@@ -15,26 +13,23 @@ type Product = {
   available: boolean;
 };
 
-// Mock product data (same as in api/products/route.ts)
+// Mock product data
 const products: Product[] = [
   {
-  
-  id: "1",
-  slug: "wireless-headphones",
-  name: "Wireless Headphones",
-  price: 89.99,
-  images: [
-    "https://images.unsplash.com/photo-1580894908361-4f3b7d6a7f5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "https://images.unsplash.com/photo-1580894923456-abc123?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    "https://images.unsplash.com/photo-1580894937890-def456?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-  ],
-  stock: 12,
-  category: "Audio",
-  description: "Comfortable over-ear headphones with noise cancellation.",
-  available: true,
-},
-
-
+    id: "1",
+    slug: "wireless-headphones",
+    name: "Wireless Headphones",
+    price: 89.99,
+    images: [
+      "https://images.unsplash.com/photo-1580894908361-4f3b7d6a7f5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1580894923456-abc123?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1580894937890-def456?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+    ],
+    stock: 12,
+    category: "Audio",
+    description: "Comfortable over-ear headphones with noise cancellation.",
+    available: true,
+  },
   {
     id: "2",
     slug: "smart-watch",
@@ -55,7 +50,6 @@ const products: Product[] = [
     name: "JBL Speaker",
     price: 199.99,
     images: [
-      
       "https://images.unsplash.com/images/I/619BB1ON8+L._AC_SL1500_.jpg",
       "https://images.unsplash.com/photo-1616627467890-ghi123",
     ],
@@ -97,10 +91,11 @@ const products: Product[] = [
 // Dynamic GET handler
 export async function GET(
   req: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const product = products.find((p) => p.slug === params.slug);
+    const { slug } = await params;
+    const product = products.find((p) => p.slug === slug);
 
     if (!product) {
       return NextResponse.json(
