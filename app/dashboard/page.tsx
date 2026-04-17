@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import CartPage from "@/app/cart/page"; // Enhanced CartPage
+import CartPage from "@/app/cart/page";
 import ProductCard from "@/components/ui/ProductCard";
 import { getProducts } from "@/lib/products";
 import { Product } from "@/types/product";
@@ -12,7 +12,9 @@ export default function Dashboard() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    getProducts().then(setProducts).catch(console.error);
+    getProducts()
+      .then((data) => setProducts(data as Product[]))
+      .catch(console.error);
   }, []);
 
   if (!isSignedIn)
@@ -24,12 +26,10 @@ export default function Dashboard() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-      {/* Welcome Header */}
       <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center md:text-left">
         Welcome back, {user?.firstName}!
       </h1>
 
-      {/* Cart Section */}
       <section className="space-y-4">
         <h2 className="text-xl sm:text-2xl font-semibold mb-2 text-center md:text-left">
           Your Cart
@@ -39,7 +39,6 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Recommended Products Section */}
       <section className="space-y-4">
         <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-center md:text-left">
           Recommended Products
