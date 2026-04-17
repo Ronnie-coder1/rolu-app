@@ -7,7 +7,7 @@ export interface Product {
   name: string;
   image: string;
   price: number;
-  stripePriceId: string;
+
   category: ProductCategory;
 
   // NEW fields
